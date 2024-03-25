@@ -1,0 +1,2 @@
+scrapy shell 'http://dl.bestsitcom.ir/HIMYM/720/2/' --nolog
+response.xpath("//a/@href").extract()

@@ -1,0 +1,41 @@
+#! /bin/bash
+
+echo "-- DL-KNIGHT --"
+
+lab51cc 1>/dev/null 2>/dev/null
+if [[ "$?" > 0 ]]
+then
+ echo "[dependency] <lab51cc>"
+ echo "[contact] <github.com/ID>"
+ read -n1 -r -p "press any key to EXIT..." key
+ exit
+fi
+
+path="/var/www/html/dl-knight"
+if [[ -e $path ]]
+then
+ echo "[WARNING] an application with similar name found: $path"
+ read -p "Continue? (Y/N): " confirm && [[ $confirm == [yY] ]] || exit 1
+fi
+
+sudo apt-get update
+sudo apt-get install -y apache2
+
+echo -n "[] installing dl-knight..."
+pip3 install cryptography --upgrade 1>/dev/null 2>/dev/null
+pip3 install scrapy 1>/dev/null 2>/dev/null
+pip3 install json_lines 1>/dev/null 2>/dev/null
+echo "DONE."
+
+sudo rm -rf /var/www/html/dl-knight
+sudo mkdir /var/www/html/dl-knight 2>/dev/null
+
+cd lib
+lab51cc main.cc
+mv main_* link-scraper
+zip -y -q -r link-scraper.zip link-scraper spider-1.py enlist.py
+mv link-scraper.zip ..
+rm link-scraper
+cd ..
+
+read -n1 -r -p "press any key to EXIT..." key
